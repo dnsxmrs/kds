@@ -13,10 +13,8 @@
     "sass-loader": "^12.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "mix",
-    "prod": "mix --production",
-    "build": "npm run prod"
+    "build": "vite build",
+    "dev": "vite"
   },
   "keywords": [],
   "author": "",
