@@ -3,11 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Illuminate\Support\Facades\Log;
 
 class APIController extends Controller
 {
+    public function check()
+    {
+        $dbConnection = DB::connection()->getPdo() ? 'UP' : 'DOWN';
+        // $cacheStatus = Cache::store('redis')->get('health-check') !== null ? 'UP' : 'DOWN';
+
+        return response()->json([
+            'status' => 'UP',
+            'checks' => [
+                'database' => $dbConnection,
+                // 'cache' => $cacheStatus,
+            ],
+        ]);
+    }
+
     public function index(Request $request)
     {
         \Log::info('Received upOrder request', [
@@ -58,84 +74,89 @@ class APIController extends Controller
         return response()->json(['message' => 'Order received and stored successfully'], 201);
     }
 
-    //
-    public function upOrder(Request $request)
-{
-    \Log::info('Received upOrder request', [
-        'request_method' => $request->method(),
-        'request_data' => $request->all()
-    ]);
-
-    try {
-        // Validate the incoming request
-        $validatedData = $request->validate([
-            'order_id' => 'required',
-            'order_status' => 'required',
-            'order_number' => 'required',
-            'order_date' => 'required',
-            'order_time' => 'required',
-            'order_items' => 'required|array',
+    // legit controller
+    public function order(Request $request)
+    {
+        Log::info('Received upOrder request', [
+            'request_method' => $request->method(),
+            'request_data' => $request->all()
         ]);
 
-        \Log::info('Request data validated successfully', ['validated_data' => $validatedData]);
-
-        // Extract data
-        $orderData = $validatedData;
-        $orderItems = $orderData['order_items'];
-
-        \Log::info('Extracted order data and items', [
-            'order_data' => $orderData,
-            'order_items' => $orderItems
-        ]);
-
-        // Format date and time
-        $formattedOrderDate = \Carbon\Carbon::parse($orderData['order_date'])->format('Y-m-d');
-        $formattedOrderTime = \Carbon\Carbon::parse($orderData['order_time'])->format('H:i:s');
-
-        // Create Order
-        $order = Order::create([
-            'id' => $orderData['order_id'],
-            'order_number' => $orderData['order_number'],
-            'status' => $orderData['order_status'],
-            'order_date' => $formattedOrderDate,
-            'order_time' => $formattedOrderTime,
-            'note' => $orderData['note'] ?? 'none',
-        ]);
-
-        \Log::info('Order created successfully', ['order' => $order]);
-
-        // Create Order Items
-        foreach ($orderItems as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'name' => $item['name'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'has_customization' => $item['has_customization'] ?? false,
+        try {
+            // Validate the incoming request
+            $validatedData = $request->validate([
+                'order_id' => 'required',
+                'order_status' => 'required',
+                'order_number' => 'required',
+                'order_date' => 'required',
+                'order_time' => 'required',
+                'order_items' => 'required|array',
             ]);
+
+            Log::info('Request data validated successfully', [
+                'validated_data' => $validatedData
+            ]);
+
+            // Extract data
+            $orderData = $validatedData;
+            $orderItems = $orderData['order_items'];
+
+            Log::info('Extracted order data and items', [
+                'order_data' => $orderData,
+                'order_items' => $orderItems
+            ]);
+
+            $formattedOrderDate = \Carbon\Carbon::parse($orderData['order_date'], 'UTC')
+                ->setTimezone('Asia/Manila')
+                ->format('Y-m-d');
+            $formattedOrderTime = \Carbon\Carbon::parse($orderData['order_time'], 'UTC')
+                ->setTimezone('Asia/Manila')
+                ->format('H:i:s');
+
+            // Create Order
+            $order = Order::create([
+                'id' => $orderData['order_id'],
+                'order_number' => $orderData['order_number'],
+                'status' => $orderData['order_status'],
+                'order_date' => $formattedOrderDate,
+                'order_time' => $formattedOrderTime,
+                'note' => $orderData['note'] ?? 'none',
+            ]);
+
+            Log::info('Order created successfully', ['order' => $order]);
+
+            // Create Order Items
+            foreach ($orderItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'name' => $item['name'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'has_customization' => $item['has_customization'],
+                ]);
+            }
+
+            Log::info('Order items created successfully', ['order_items' => $orderItems]);
+
+            // Return a response
+            return response()->json(['message' => 'Order received and stored successfully'], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error occurred', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'Validation error', 'errors' => $e->errors()], 422);
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred while processing the upOrder request', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'An internal error occurred'], 500);
         }
-
-        \Log::info('Order items created successfully', ['order_items' => $orderItems]);
-
-        // Return a response
-        return response()->json(['message' => 'Order received and stored successfully'], 201);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        \Log::error('Validation error occurred', [
-            'errors' => $e->errors(),
-            'request_data' => $request->all()
-        ]);
-        return response()->json(['message' => 'Validation error', 'errors' => $e->errors()], 422);
-
-    } catch (\Exception $e) {
-        \Log::error('An error occurred while processing the upOrder request', [
-            'exception' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'request_data' => $request->all()
-        ]);
-        return response()->json(['message' => 'An internal error occurred'], 500);
     }
-}
 
 
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name', 255);
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
+            $table->boolean('has_customization')->default(false); // Whether the item has customization (default is false)
             $table->timestamps();
         });
     }

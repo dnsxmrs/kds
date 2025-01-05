@@ -17,10 +17,28 @@ class Order extends Model
     //     'order_time',
     // ];
 
-    protected $fillable = ['order_status', 'total_price', 'user_id', 'created_at', 'updated_at']; // Add any other necessary fields
+    // protected $fillable = [
+    //     'order_status'
+    //     , 'total_price'
+    //     , 'user_id'
+    //     , 'created_at'
+    //     , 'updated_at'
+    // ]; // Add any other necessary fields
 
+    protected $fillable = [
+        'id',  // Add 'id' here if it's part of the mass assignment
+        'order_number',
+        'order_status',
+        'order_type',
+        'order_date',
+        'order_time',
+        'notes',
+        'updated_at',
+        'created_at',
+        // Add any other fields that need mass assignment
+    ];
 
-    public function items()
+    public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }

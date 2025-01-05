@@ -14,14 +14,11 @@ use App\Http\Controllers\OrderController;
 //     return view('orders.new-orders');
 // });
 
-
-
-
 Route::get('/', [OrderController::class, 'showOrder'])->name('order.show');
 
-Route::post('/update-order-status', [OrderController::class, 'updateStatus']);
+// Route::post('/update-order-status', [OrderController::class, 'updateStatus']);
 
-
+Route::match(['post', 'put'], '/update-order-status', [OrderController::class, 'updateStatus'])->name('order.show');
 
 Route::get('/in-progress-orders', function () {
     return view('orders.in-progress-orders');

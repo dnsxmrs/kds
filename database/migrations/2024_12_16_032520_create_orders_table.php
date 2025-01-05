@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('order_status', ['pending', 'preparing', 'ready', 'completed', 'cancelled'])->default('pending');
             $table->date('order_date');
             $table->time('order_time');
+            $table->string('note')->nullable()->default('none'); // Optional note with default value of 'none'
             $table->timestamps();
         });
     }

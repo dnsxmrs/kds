@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function showOrder()
     {
-        $orders = Order::with('items')->get();
+        $orders = Order::with('orderItems')->get();
 
         return view('orders.new-orders', compact('orders'));
     }
