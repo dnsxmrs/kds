@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const tabId = button.getAttribute("data-tab"); // Assume each button has a data-tab attribute with the target tabId
                 showTab(tabId, button); // Call showTab with the tab ID and clicked button
             });
-        }); 
+        });
 
     document.addEventListener("DOMContentLoaded", function () {
         const startButtons = document.querySelectorAll(".startButton");

@@ -16,9 +16,9 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     {{-- <script src="{{ script.js }}"></script> --}}
-    <script src="{{ asset('js/script.js') }}"></script>
+    {{-- <script src="{{ asset('js/script.js') }}"></script> --}}
 
-    @vite(['resources/js/app.js', 'resources/js/script.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         body {
