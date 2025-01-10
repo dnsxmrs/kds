@@ -14,7 +14,7 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}?v=2" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     {{-- <script src="{{ script.js }}"></script> --}}
     {{-- <script src="{{ asset('js/script.js') }}"></script> --}}
 
