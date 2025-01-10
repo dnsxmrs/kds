@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
+use App\Models\Category;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Log;
 
@@ -26,7 +27,7 @@ class APIController extends Controller
 
     public function index(Request $request)
     {
-        \Log::info('Received upOrder request', [
+        Log::info('Received upOrder request', [
             'request_method' => $request->method(),
             'request_data' => $request->all()
         ]);
@@ -163,7 +164,7 @@ class APIController extends Controller
     public function upCategory(Request $request)
     {
         // log incoming request
-        \Log::info('Received upCategory request', [
+        Log::info('Received upCategory request', [
             'request_method' => $request->method(),
             'request_data' => $request->all()
         ]);
@@ -197,7 +198,7 @@ class APIController extends Controller
                     'image' => $validatedData['image_url'] ?: null, // Treat empty string as null
                 ]);
 
-                \Log::info('Category updated successfully', [
+                Log::info('Category updated successfully', [
                     'category_number' => $category->category_number,
                     'name' => $category->name,
                     'type' => $category->type,
@@ -221,7 +222,7 @@ class APIController extends Controller
                     'image' => $validatedData['image_url'] ?: null,
                 ]);
 
-                \Log::info('Category created successfully', [
+                Log::info('Category created successfully', [
                     'category_number' => $category->category_number,
                     'name' => $category->name,
                     'type' => $category->type,
@@ -238,7 +239,7 @@ class APIController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error with relevant context
-            \Log::error('Failed to process category operation', [
+            Log::error('Failed to process category operation', [
                 'error' => $e->getMessage(),
                 'data' => $validatedData,
             ]);
@@ -271,7 +272,7 @@ class APIController extends Controller
 
             $category->delete();
 
-            \Log::info('Category deleted successfully', [
+            Log::info('Category deleted successfully', [
                 'category_number' => $validatedData['category_number'],
             ]);
 
@@ -281,7 +282,7 @@ class APIController extends Controller
                 'category_number' => $validatedData['category_number'],
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Failed to delete category', [
+            Log::error('Failed to delete category', [
                 'error' => $e->getMessage(),
                 'category_number' => $validatedData['category_number'],
             ]);
