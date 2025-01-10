@@ -18,6 +18,8 @@
     {{-- <script src="{{ script.js }}"></script> --}}
     <script src="{{ asset('js/script.js') }}"></script>
 
+    @vite(['resources/js/app.js', 'resources/js/custom.js'])    
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
