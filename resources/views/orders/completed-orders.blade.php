@@ -15,7 +15,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Barlow', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
     </style>
 </head>
@@ -49,7 +49,7 @@
 
     {{-- TABS FOR ORDER PROCESSING --}}
     <div class="bg-[#1C3D34] relative sticky z-10 h-[110px] bg-center bg-cover top-20">
-        <div class="absolute inset-0 flex items-center bg-black bg-opacity-30 px-5 justify-between">
+        <div class="absolute inset-0 flex items-center justify-between px-5 bg-black bg-opacity-30">
             <!-- Tabs -->
             <div class="tabs flex space-x-5 ml-[60px]">
                 <button
@@ -77,7 +77,7 @@
                         5
                     </div>
                     <!-- Label -->
-                    <span class="text-white text-sm">New Orders</span>
+                    <span class="text-sm text-white">New Orders</span>
                 </div>
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
@@ -86,7 +86,7 @@
                         3
                     </div>
                     <!-- Label -->
-                    <span class="text-white text-sm">Processed</span>
+                    <span class="text-sm text-white">Processed</span>
                 </div>
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
@@ -95,7 +95,7 @@
                         4
                     </div>
                     <!-- Label -->
-                    <span class="text-white text-sm">Ready</span>
+                    <span class="text-sm text-white">Ready</span>
                 </div>
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
@@ -104,14 +104,14 @@
                         10
                     </div>
                     <!-- Label -->
-                    <span class="text-white text-sm">Served</span>
+                    <span class="text-sm text-white">Served</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Order Cards Grid -->
-    <div class="grid grid-cols-4 gap-4 my-6 mx-10">
+    <div class="grid grid-cols-4 gap-4 mx-10 my-6">
         <!-- Order Card -->
         <!-- Repeat the order card as needed -->
         @for ($count = 1; $count <= 5; $count++)
@@ -130,7 +130,7 @@
                                 <div>
                                     <span>Iced Americano</span>
                                     <br>
-                                    <span class="text-black-500 text-sm block">22oz</span>
+                                    <span class="block text-sm text-black-500">22oz</span>
                                 </div>
                                 <span>x 2</span>
                             </li>
@@ -138,15 +138,15 @@
                                 <div>
                                     <span>Iced Mocha</span>
                                     <br>
-                                    <span class="text-black-500 text-sm block">22oz</span>
+                                    <span class="block text-sm text-black-500">22oz</span>
                                 </div>
                                 <span>x 1</span>
                             </li>
                         </ul>
                         <hr class="my-5">
                         <div class="mt-4">
-                            <p class="text-black-500 text-sm"><strong>Note:</strong></p>
-                            <p class="text-black-500 text-sm">No sugar</p>
+                            <p class="text-sm text-black-500"><strong>Note:</strong></p>
+                            <p class="text-sm text-black-500">No sugar</p>
                             <div class="flex items-center justify-center">
                                 <button
                                     class="w-[177px] h-[41px] rounded-[10px] bg-[#263238] text-white font-bold flex items-center justify-center hover:bg-gray-700 mt-5">
