@@ -45,6 +45,40 @@ class OrderController extends Controller
         }
     }
 
+    public function updateOrderStatus(Request $request)
+    {
+        $validatedData = $request->validate([
+            'order_id' => 'required|integer|exists:orders,id',
+            'status' => 'required|string|in:preparing,ready,completed,canceled',
+        ]);
+
+        $order = Order::find($validatedData['order_id']);
+        $order->order_status = $validatedData['status'];
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Order status updated to {$validatedData['status']}",
+        ]);
+        // return response()->json(['success' => false, 'message' => 'Order not found']);
+    }
+
+    public function headerFetch()
+    {
+        // Use count() to get the count for each status
+        $newOrdersCount = Order::where('order_status', 'pending')->count();
+        $processedCount = Order::where('order_status', 'preparing')->count();
+        $readyCount = Order::where('order_status', 'ready')->count();
+        $servedCount = Order::where('order_status', 'completed')->count();
+
+        return response()->json([
+            'newOrders' => $newOrdersCount,
+            'processed' => $processedCount,
+            'ready' => $readyCount,
+            'served' => $servedCount,
+        ]);
+    }
+
 
     /**
      * Display a listing of the resource.

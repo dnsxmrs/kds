@@ -14,9 +14,8 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}?v=2" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
-    {{-- <script src="{{ script.js }}"></script> --}}
-    {{-- <script src="{{ asset('js/script.js') }}"></script> --}}
+    {{-- <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('Assets/js/script.js') }}" defer></script> --}}
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -74,8 +73,8 @@
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
                     <div
-                        class="flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                        5
+                        class="newOrders flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
+                    0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">New Orders</span>
@@ -83,8 +82,8 @@
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
                     <div
-                        class="flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                        3
+                        class="processed flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
+                    0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">Processed</span>
@@ -92,8 +91,8 @@
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
                     <div
-                        class="flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                        4
+                        class="ready flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
+                    0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">Ready</span>
@@ -101,8 +100,8 @@
                 <div class="flex flex-col items-center space-y-2">
                     <!-- Circle with Number -->
                     <div
-                        class="flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                        10
+                        class="served flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
+                    0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">Served</span>
@@ -114,7 +113,8 @@
     <!-- Tabs Content -->
     <div class="tabs-content">
         <!-- New Orders Tab -->
-        <div id="new-orders" class="tab-content" style="display: block;" wire:show="activeTab === 'new-orders'">
+        <div id="new-orders" class="tab-content" style="display: block;" wire:show="activeTab === 'new-orders'"
+                data-tab="new-orders">
             <div class="grid grid-cols-5 gap-6 my-6 mx-10">
                 @foreach ($orders as $order)
                     @if ($order->order_status === 'pending')
@@ -156,6 +156,7 @@
                                             <p class="text-black-500 text-sm">{{ $order->note }}</p>
                                             <div class="flex items-center justify-center">
                                                 <button id="startButton-{{ $order->id }}" data-id="{{ $order->id }}"
+                                                    onclick="updateOrderStatus({{ $order->id }}, this, 'preparing')"
                                                     class="startButton w-[177px] h-[41px] rounded-[10px] bg-[#263238] text-white font-bold flex items-center justify-center hover:bg-gray-700 mt-5">
                                                     Start
                                                 </button>
@@ -172,7 +173,8 @@
 
         <!-- In-Progress Orders Tab -->
         <div id="in-progress-orders" class="tab-content" style="display: none;"
-            wire:show="activeTab === 'in-progress-orders'">
+            wire:show="activeTab === 'in-progress-orders'"
+            data-tab="in-progress-orders">
             <div class="grid grid-cols-5 gap-6 my-6 mx-10">
                 @foreach ($orders as $order)
                     @if ($order->order_status === 'preparing')
@@ -210,6 +212,7 @@
                                             <p class="text-black-500 text-sm">{{ $order->note }}</p>
                                             <div class="flex items-center justify-center">
                                                 <button id="finishButton" data-id="{{ $order->id }}"
+                                                    onclick="updateOrderStatus({{ $order->id }}, this, 'ready')"
                                                     class="w-[177px] h-[41px] rounded-[10px] bg-[#263238] text-white font-bold flex items-center justify-center hover:bg-gray-700 mt-5">
                                                     Finish
                                                 </button>
@@ -225,7 +228,8 @@
         </div>
 
         <!-- Completed Orders Tab -->
-        <div id="completed-orders" class="tab-content" style="display: none;">
+        <div id="completed-orders" class="tab-content" style="display: none;"
+            data-tab="completed-orders">
             <div class="grid grid-cols-5 gap-6 my-6 mx-10">
                 @foreach ($orders as $order)
                     @if ($order->order_status === 'ready')
@@ -263,6 +267,7 @@
                                             <p class="text-black-500 text-sm">{{ $order->note }}</p>
                                             <div class="flex items-center justify-center">
                                                 <button id="printButton" data-id="{{ $order->id }}"
+                                                    onclick="updateOrderStatus({{ $order->id }}, this, 'completed')"
                                                     class="w-[177px] h-[41px] rounded-[10px] bg-[#263238] text-white font-bold flex items-center justify-center hover:bg-gray-700 mt-5">
                                                     Print
                                                 </button>

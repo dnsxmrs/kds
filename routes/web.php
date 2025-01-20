@@ -17,6 +17,11 @@ use App\Http\Controllers\OrderController;
 Route::get('/', [OrderController::class, 'showOrder'])->name('order.show');
 
 // Route::post('/update-order-status', [OrderController::class, 'updateStatus']);
+Route::post('/orders/update-status', [OrderController::class, 'updateOrderStatus'])->name('orders.updateStatus');
+
+Route::get('/header', [OrderController::class, 'headerFetch'])->name('headerFetch');
+
+
 
 Route::match(['post', 'put'], '/update-order-status', [OrderController::class, 'updateStatus'])->name('order.show');
 
