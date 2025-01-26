@@ -17,8 +17,9 @@ use App\Http\Controllers\OrderController;
 Route::get('/', [OrderController::class, 'showOrder'])->name('order.show');
 
 // Route::post('/update-order-status', [OrderController::class, 'updateStatus']);
+// used in updating status in js
 Route::post('/orders/update-status', [OrderController::class, 'updateOrderStatus'])->name('orders.updateStatus');
-
+//used in updating header
 Route::get('/header', [OrderController::class, 'headerFetch'])->name('headerFetch');
 
 

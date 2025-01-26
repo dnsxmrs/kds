@@ -14,8 +14,8 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}?v=2" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    {{-- <script src="{{ asset('Assets/js/script.js') }}" defer></script> --}}
+    {{-- <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('assets/js/script.js') }}" defer></script> --}}
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
