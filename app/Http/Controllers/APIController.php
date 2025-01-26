@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
-use App\Models\Category;
+// use App\Models\Category;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Log;
+
 
 class APIController extends Controller
 {
@@ -100,6 +101,7 @@ class APIController extends Controller
 
             // Extract data
             $orderData = $validatedData;
+            
             $orderItems = $orderData['order_items'];
 
             Log::info('Extracted order data and items', [
@@ -133,7 +135,7 @@ class APIController extends Controller
                     'name' => $item['name'],
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
-                    'has_customization' => $item['has_customization'],
+                    // 'has_customization' => $item['has_customization'],
                 ]);
             }
 
@@ -161,137 +163,137 @@ class APIController extends Controller
 
 
 
-    public function upCategory(Request $request)
-    {
-        // log incoming request
-        Log::info('Received upCategory request', [
-            'request_method' => $request->method(),
-            'request_data' => $request->all()
-        ]);
+    // public function upCategory(Request $request)
+    // {
+    //     // log incoming request
+    //     Log::info('Received upCategory request', [
+    //         'request_method' => $request->method(),
+    //         'request_data' => $request->all()
+    //     ]);
 
-        // Determine the request method
-        $method = $request->method();
+    //     // Determine the request method
+    //     $method = $request->method();
 
-        if ($method === 'DELETE') {
-            return $this->deleteCategory($request);
-        }
+    //     if ($method === 'DELETE') {
+    //         return $this->deleteCategory($request);
+    //     }
 
-        // Validate the incoming request data
-        $validatedData = $request->validate([
-            'category_number' => 'required|integer', // Ensure the category exists
-            'category_name' => 'required|string|max:255', // Category name should not exceed 255 chars
-            'type' => 'required|string|max:255', // Validate category type (e.g., food, beverage)
-            'beverage_type' => 'nullable|string|max:255', // Optional, e.g., hot, iced
-            'image_url' => 'nullable|string|url', // Ensure the image_url is a valid URL if provided
-        ]);
+    //     // Validate the incoming request data
+    //     $validatedData = $request->validate([
+    //         'category_number' => 'required|integer', // Ensure the category exists
+    //         'category_name' => 'required|string|max:255', // Category name should not exceed 255 chars
+    //         'type' => 'required|string|max:255', // Validate category type (e.g., food, beverage)
+    //         'beverage_type' => 'nullable|string|max:255', // Optional, e.g., hot, iced
+    //         'image_url' => 'nullable|string|url', // Ensure the image_url is a valid URL if provided
+    //     ]);
 
-        try {
-            // Check if category exists by category_number
-            $category = Category::where('category_number', $validatedData['category_number'])->first();
+    //     try {
+    //         // Check if category exists by category_number
+    //         $category = Category::where('category_number', $validatedData['category_number'])->first();
 
-            if ($category) {
-                // Update the existing category
-                $category->update([
-                    'name' => $validatedData['category_name'],
-                    'type' => $validatedData['type'],
-                    'beverage_type' => $validatedData['beverage_type'] ?? null,
-                    'image' => $validatedData['image_url'] ?: null, // Treat empty string as null
-                ]);
+    //         if ($category) {
+    //             // Update the existing category
+    //             $category->update([
+    //                 'name' => $validatedData['category_name'],
+    //                 'type' => $validatedData['type'],
+    //                 'beverage_type' => $validatedData['beverage_type'] ?? null,
+    //                 'image' => $validatedData['image_url'] ?: null, // Treat empty string as null
+    //             ]);
 
-                Log::info('Category updated successfully', [
-                    'category_number' => $category->category_number,
-                    'name' => $category->name,
-                    'type' => $category->type,
-                    'beverage_type' => $category->beverage_type,
-                    'image' => $category->image,
-                ]);
+    //             Log::info('Category updated successfully', [
+    //                 'category_number' => $category->category_number,
+    //                 'name' => $category->name,
+    //                 'type' => $category->type,
+    //                 'beverage_type' => $category->beverage_type,
+    //                 'image' => $category->image,
+    //             ]);
 
-                // Return success response for update
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Category updated successfully!',
-                    'category' => $category,
-                ], 200);
-            } else {
-                // Create a new category if it doesn't exist
-                $category = Category::create([
-                    'category_number' => $validatedData['category_number'],
-                    'name' => $validatedData['category_name'],
-                    'type' => $validatedData['type'],
-                    'beverage_type' => $validatedData['beverage_type'] ?? null,
-                    'image' => $validatedData['image_url'] ?: null,
-                ]);
+    //             // Return success response for update
+    //             return response()->json([
+    //                 'status' => 'success',
+    //                 'message' => 'Category updated successfully!',
+    //                 'category' => $category,
+    //             ], 200);
+    //         } else {
+    //             // Create a new category if it doesn't exist
+    //             $category = Category::create([
+    //                 'category_number' => $validatedData['category_number'],
+    //                 'name' => $validatedData['category_name'],
+    //                 'type' => $validatedData['type'],
+    //                 'beverage_type' => $validatedData['beverage_type'] ?? null,
+    //                 'image' => $validatedData['image_url'] ?: null,
+    //             ]);
 
-                Log::info('Category created successfully', [
-                    'category_number' => $category->category_number,
-                    'name' => $category->name,
-                    'type' => $category->type,
-                    'beverage_type' => $category->beverage_type,
-                    'image' => $category->image,
-                ]);
+    //             Log::info('Category created successfully', [
+    //                 'category_number' => $category->category_number,
+    //                 'name' => $category->name,
+    //                 'type' => $category->type,
+    //                 'beverage_type' => $category->beverage_type,
+    //                 'image' => $category->image,
+    //             ]);
 
-                // Return success response for creation
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Category created successfully!',
-                    'category' => $category,
-                ], 201);
-            }
-        } catch (\Exception $e) {
-            // Log the error with relevant context
-            Log::error('Failed to process category operation', [
-                'error' => $e->getMessage(),
-                'data' => $validatedData,
-            ]);
+    //             // Return success response for creation
+    //             return response()->json([
+    //                 'status' => 'success',
+    //                 'message' => 'Category created successfully!',
+    //                 'category' => $category,
+    //             ], 201);
+    //         }
+    //     } catch (\Exception $e) {
+    //         // Log the error with relevant context
+    //         Log::error('Failed to process category operation', [
+    //             'error' => $e->getMessage(),
+    //             'data' => $validatedData,
+    //         ]);
 
-            // Return failure response
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to process category operation.',
-                'error_details' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         // Return failure response
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to process category operation.',
+    //             'error_details' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 
-    // referenced in upCategory method - deleting a category
-    protected function deleteCategory(Request $request)
-    {
-        $validatedData = $request->validate([
-            'category_number' => 'required|integer', // Ensure the category_number is provided
-        ]);
+    // // referenced in upCategory method - deleting a category
+    // protected function deleteCategory(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'category_number' => 'required|integer', // Ensure the category_number is provided
+    //     ]);
 
-        try {
-            $category = Category::where('category_number', $validatedData['category_number'])->first();
+    //     try {
+    //         $category = Category::where('category_number', $validatedData['category_number'])->first();
 
-            if (!$category) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Category not found.',
-                ], 404);
-            }
+    //         if (!$category) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Category not found.',
+    //             ], 404);
+    //         }
 
-            $category->delete();
+    //         $category->delete();
 
-            Log::info('Category deleted successfully', [
-                'category_number' => $validatedData['category_number'],
-            ]);
+    //         Log::info('Category deleted successfully', [
+    //             'category_number' => $validatedData['category_number'],
+    //         ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Category deleted successfully!',
-                'category_number' => $validatedData['category_number'],
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Failed to delete category', [
-                'error' => $e->getMessage(),
-                'category_number' => $validatedData['category_number'],
-            ]);
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Category deleted successfully!',
+    //             'category_number' => $validatedData['category_number'],
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         Log::error('Failed to delete category', [
+    //             'error' => $e->getMessage(),
+    //             'category_number' => $validatedData['category_number'],
+    //         ]);
 
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to delete category.',
-                'error_details' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to delete category.',
+    //             'error_details' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 }
