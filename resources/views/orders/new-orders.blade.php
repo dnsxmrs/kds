@@ -15,9 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="{{ asset('Assets/js/script.js') }}" defer></script>
+    {{-- <script src="{{ asset('Assets/js/script.js') }}" defer></script> --}}
 
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         body {
@@ -50,20 +50,17 @@
             <div class="tabs flex space-x-5 ml-[60px]">
                 <button
                     class="tab-button w-[188px] h-[37px] rounded-[18.5px] bg-white text-black hover:bg-gray-200 focus:ring-2 focus:ring-gray-300"
-                    onclick="showTab('new-orders', this)"
-                    wire:click="setActiveTab('new-orders')">
+                    onclick="showTab('new-orders', this)" wire:click="setActiveTab('new-orders')">
                     New Orders
                 </button>
                 <button
                     class="tab-button w-[188px] h-[37px] rounded-[18.5px] bg-[#9D9D9D] text-[#555555] hover:bg-gray-200 focus:ring-2 focus:ring-gray-300"
-                    onclick="showTab('in-progress-orders', this)"
-                    wire:click="setActiveTab('in-progress-orders')">
+                    onclick="showTab('in-progress-orders', this)" wire:click="setActiveTab('in-progress-orders')">
                     In-Progress Orders
                 </button>
                 <button
                     class="tab-button w-[188px] h-[37px] rounded-[18.5px] bg-[#9D9D9D] text-[#555555] hover:bg-gray-200 focus:ring-2 focus:ring-gray-300"
-                    onclick="showTab('completed-orders', this)"
-                    wire:click="setActiveTab('completed-orders')">
+                    onclick="showTab('completed-orders', this)" wire:click="setActiveTab('completed-orders')">
                     Completed Orders
                 </button>
             </div>
@@ -74,7 +71,7 @@
                     <!-- Circle with Number -->
                     <div
                         class="newOrders flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                    0
+                        0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">New Orders</span>
@@ -83,7 +80,7 @@
                     <!-- Circle with Number -->
                     <div
                         class="processed flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                    0
+                        0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">Processed</span>
@@ -92,7 +89,7 @@
                     <!-- Circle with Number -->
                     <div
                         class="ready flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                    0
+                        0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">Ready</span>
@@ -101,7 +98,7 @@
                     <!-- Circle with Number -->
                     <div
                         class="served flex items-center justify-center bg-white text-[#1C3D34] font-bold text-3xl w-[50px] h-[50px] rounded-full">
-                    0
+                        0
                     </div>
                     <!-- Label -->
                     <span class="text-white text-sm">Served</span>
@@ -114,7 +111,7 @@
     <div class="tabs-content">
         <!-- New Orders Tab -->
         <div id="new-orders" class="tab-content" style="display: block;" wire:show="activeTab === 'new-orders'"
-                data-tab="new-orders">
+            data-tab="new-orders">
             <div class="grid grid-cols-5 gap-6 my-6 mx-10">
                 @foreach ($orders as $order)
                     @if ($order->order_status === 'pending')
@@ -155,7 +152,8 @@
                                             <p class="text-black-500 text-sm mb-2"><strong>Note:</strong></p>
                                             <p class="text-black-500 text-sm">{{ $order->note }}</p>
                                             <div class="flex items-center justify-center">
-                                                <button id="startButton-{{ $order->id }}" data-id="{{ $order->id }}"
+                                                <button id="startButton-{{ $order->id }}"
+                                                    data-id="{{ $order->id }}"
                                                     onclick="updateOrderStatus({{ $order->id }}, this, 'preparing')"
                                                     class="startButton w-[177px] h-[41px] rounded-[10px] bg-[#263238] text-white font-bold flex items-center justify-center hover:bg-gray-700 mt-5">
                                                     Start
@@ -173,8 +171,7 @@
 
         <!-- In-Progress Orders Tab -->
         <div id="in-progress-orders" class="tab-content" style="display: none;"
-            wire:show="activeTab === 'in-progress-orders'"
-            data-tab="in-progress-orders">
+            wire:show="activeTab === 'in-progress-orders'" data-tab="in-progress-orders">
             <div class="grid grid-cols-5 gap-6 my-6 mx-10">
                 @foreach ($orders as $order)
                     @if ($order->order_status === 'preparing')
@@ -228,8 +225,7 @@
         </div>
 
         <!-- Completed Orders Tab -->
-        <div id="completed-orders" class="tab-content" style="display: none;"
-            data-tab="completed-orders">
+        <div id="completed-orders" class="tab-content" style="display: none;" data-tab="completed-orders">
             <div class="grid grid-cols-5 gap-6 my-6 mx-10">
                 @foreach ($orders as $order)
                     @if ($order->order_status === 'ready')
@@ -282,6 +278,110 @@
             </div>
         </div>
     </div>
+    <script>
+        // const startButtons = document.querySelectorAll(".startButton");
+        // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // window.addEventListener("load", () => {
+        //     console.log('Loading...');
+
+        //     updateHeader();
+        // });
+
+        // function updateHeader() {
+        //     // pending, preparing, ready, completed
+        //     // newOrders, processed, ready, served
+
+        //     // get the div that has a class of newOrders, processed, ready, served
+        //     const newOrders = document.querySelector('.newOrders');
+        //     const processed = document.querySelector('.processed');
+        //     const ready = document.querySelector('.ready');
+        //     const served = document.querySelector('.served');
+
+        //     fetch('/header', {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'Accept': 'application/json',
+        //                 'X-CSRF-TOKEN': csrfToken,
+        //             },
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             newOrders.textContent = data.newOrders;
+        //             processed.textContent = data.processed;
+        //             ready.textContent = data.ready;
+        //             served.textContent = data.served;
+        //         })
+        //         .catch(error => {
+        //             console.error(error);
+        //             alert('An error occurred. Please try again.');
+        //         });
+        // }
+
+        // window.showTab = function(tab, clickedButton) {
+        //     const allDivs = document.querySelectorAll(".tab-content");
+
+        //     const bgActive = 'bg-white';
+        //     const textActive = 'text-black';
+        //     const bgInactive = 'bg-[#9D9D9D]';
+        //     const textInactive = 'text-[#555555]';
+
+        //     console.log("filter tab is clicked " + tab);
+
+        //     allDivs.forEach((div) => {
+        //         if (div.getAttribute("data-tab") === tab) {
+        //             div.style.display = "block";
+        //         } else {
+        //             div.style.display = "none";
+        //         }
+        //     });
+
+        //     // Reset all buttons to inactive style
+        //     const allButtons = document.querySelectorAll('.tab-button');
+        //     allButtons.forEach((button) => {
+        //         button.classList.remove(bgActive, textActive);
+        //         button.classList.add(bgInactive, textInactive);
+        //     });
+
+        //     // Set the clicked button as active
+        //     clickedButton.classList.remove(bgInactive, textInactive);
+        //     clickedButton.classList.add(bgActive, textActive);
+        // };
+
+        // window.updateOrderStatus = function(orderId, button, status) {
+        //     fetch('/orders/update-status', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'Accept': 'application/json',
+        //                 'X-CSRF-TOKEN': csrfToken,
+        //             },
+        //             body: JSON.stringify({
+        //                 order_id: orderId,
+        //                 status: status,
+        //             }),
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (status === 'preparing') {
+        //                 button.textContent = 'Preparing...';
+        //             } else if (status === 'ready') {
+        //                 button.textContent = 'Ready...';
+        //             } else if (status === 'completed') {
+        //                 button.textContent = 'Completed...';
+        //             }
+        //             button.disabled = true;
+        //             button.classList.add('bg-gray-500', 'cursor-not-allowed');
+
+        //             location.reload();
+        //         })
+        //         .catch(error => {
+        //             console.error(error);
+        //             alert('An error occurred. Please try again.');
+        //         });
+        // }
+    </script>
 </body>
 
 </html>

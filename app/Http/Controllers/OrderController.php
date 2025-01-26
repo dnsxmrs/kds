@@ -12,6 +12,8 @@ class OrderController extends Controller
     {
         $orders = Order::with('orderItems')->get();
 
+        Log::info($orders);
+
         return view('orders.new-orders', compact('orders'));
     }
 
