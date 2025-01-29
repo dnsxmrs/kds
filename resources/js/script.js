@@ -68,7 +68,7 @@ window.showTab = function (tab, clickedButton) {
     clickedButton.classList.add(bgActive, textActive);
 };
 
-window.updateOrderStatus = function (orderId, button, status) {
+window.updateOrderStatus = function (id, button, status) {
     fetch('/orders/update-status', {
         method: 'POST',
         headers: {
@@ -77,7 +77,7 @@ window.updateOrderStatus = function (orderId, button, status) {
             'X-CSRF-TOKEN': csrfToken,
         },
         body: JSON.stringify({
-            order_id: orderId,
+            id: id,
             status: status,
         }),
     })

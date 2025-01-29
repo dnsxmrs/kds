@@ -26,13 +26,13 @@ class Order extends Model
     // ]; // Add any other necessary fields
 
     protected $fillable = [
-        'id',  // Add 'id' here if it's part of the mass assignment
+        'order_id',
         'order_number',
         'order_status',
-        'order_type',
+        // 'order_type',
         'order_date',
         'order_time',
-        'notes',
+        'note',
         'origin',
         'updated_at',
         'created_at',

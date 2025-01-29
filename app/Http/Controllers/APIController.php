@@ -118,9 +118,9 @@ class APIController extends Controller
 
             // Create Order
             $order = Order::create([
-                'id' => $orderData['order_id'],
+                'order_id' => $orderData['order_id'],
                 'order_number' => $orderData['order_number'],
-                'status' => $orderData['order_status'],
+                'order_status' => $orderData['order_status'],
                 'order_date' => $formattedOrderDate,
                 'order_time' => $formattedOrderTime,
                 'note' => $orderData['note'] ?? 'none',
@@ -179,6 +179,7 @@ class APIController extends Controller
                 'order_date' => 'required', // Order date should be a valid date
                 'order_time' => 'required', // Order time should be a valid ISO 8601 timestamp
                 'order_items' => 'required|array', // Order items should not be empty
+                'notes' => 'required|string', // Order notes should not be empty
             ]);
 
             Log::info('Received webToKds request', [
@@ -202,13 +203,13 @@ class APIController extends Controller
                 ->setTimezone('Asia/Manila')
                 ->format('H:i:s');
 
-            // Create Order
             $order = Order::create([
+                'order_id' => $orderData['order_id'],
                 'order_number' => $orderData['order_number'],
-                'status' => $orderData['order_status'],
+                'order_status' => $orderData['order_status'],
                 'order_date' => $formattedOrderDate,
                 'order_time' => $formattedOrderTime,
-                'note' => $orderData['note'] ?? 'none',
+                'note' => $orderData['notes'] ?? 'none',
                 'origin' => 'web'
             ]);
 

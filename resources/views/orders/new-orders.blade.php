@@ -117,8 +117,6 @@
                     @if ($order->order_status === 'pending')
                         <div class="order-card">
                             <!-- Order Cards Grid -->
-
-                            <!-- Order Card -->
                             <!-- Repeat the order card as needed -->
                             <div class=" ">
                                 <div class="bg-red-500 text-white p-2">
