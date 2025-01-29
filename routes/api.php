@@ -26,7 +26,10 @@ Route::post('/test-order', [TestController::class, 'testOrder']);
 // production routes
 Route::middleware([CheckPosSource::class])->group(function () {
     Route::prefix('v1')->group(function () {
+        // order from POS to KDS
         Route::post('/push-order', [APIController::class, 'order']);
+        // order from WEB to KDS
+        Route::post('/web-to-kds', [APIController::class, 'webToKds']);
     });
 });
 

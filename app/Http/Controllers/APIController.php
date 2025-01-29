@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
-// use App\Models\Category;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Validation\ValidationException;
+use Exception;
 
 class APIController extends Controller
 {
@@ -101,10 +101,10 @@ class APIController extends Controller
 
             // Extract data
             $orderData = $validatedData;
-            
+
             $orderItems = $orderData['order_items'];
 
-            Log::info('Extracted order data and items', [
+            Log::info('Extracted order data and items pos', [
                 'order_data' => $orderData,
                 'order_items' => $orderItems
             ]);
@@ -124,6 +124,7 @@ class APIController extends Controller
                 'order_date' => $formattedOrderDate,
                 'order_time' => $formattedOrderTime,
                 'note' => $orderData['note'] ?? 'none',
+                'origin' => 'pos'
             ]);
 
             Log::info('Order created successfully', ['order' => $order]);
@@ -144,15 +145,101 @@ class APIController extends Controller
             // Return a response
             return response()->json(['message' => 'Order received and stored successfully'], 201);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             Log::error('Validation error occurred', [
                 'errors' => $e->errors(),
                 'request_data' => $request->all()
             ]);
             return response()->json(['message' => 'Validation error', 'errors' => $e->errors()], 422);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('An error occurred while processing the upOrder request', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'An internal error occurred'], 500);
+        }
+    }
+
+    public function webToKds(Request $request)
+    {
+        // log incoming request
+        Log::info('Received webToKds request', [
+            'request_method' => $request->method(),
+            'request_data' => $request->all()
+        ]);
+
+        try {
+            // Validate the incoming request data
+            $validatedData = $request->validate([
+                'order_id' => 'required|integer', // Ensure the order exists
+                'order_status' => 'required|string', // Validate order status
+                'order_number' => 'required|string', // Order number should not be empty
+                'order_date' => 'required', // Order date should be a valid date
+                'order_time' => 'required', // Order time should be a valid ISO 8601 timestamp
+                'order_items' => 'required|array', // Order items should not be empty
+            ]);
+
+            Log::info('Received webToKds request', [
+                'validated data' => $validatedData,
+            ]);
+
+            // Extract data
+            $orderData = $validatedData;
+
+            $orderItems = $orderData['order_items'];
+
+            Log::info('Extracted order data and items web', [
+                'order_data' => $orderData,
+                'order_items' => $orderItems
+            ]);
+
+            $formattedOrderDate = \Carbon\Carbon::parse($orderData['order_date'], 'UTC')
+                ->setTimezone('Asia/Manila')
+                ->format('Y-m-d');
+            $formattedOrderTime = \Carbon\Carbon::parse($orderData['order_time'], 'UTC')
+                ->setTimezone('Asia/Manila')
+                ->format('H:i:s');
+
+            // Create Order
+            $order = Order::create([
+                'order_number' => $orderData['order_number'],
+                'status' => $orderData['order_status'],
+                'order_date' => $formattedOrderDate,
+                'order_time' => $formattedOrderTime,
+                'note' => $orderData['note'] ?? 'none',
+                'origin' => 'web'
+            ]);
+
+            Log::info('Order created successfully', ['order' => $order]);
+
+            // Create Order Items
+            foreach ($orderItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'name' => $item['name'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    // 'has_customization' => $item['has_customization'],
+                ]);
+            }
+
+            Log::info('Order items created successfully', ['order_items' => $orderItems]);
+
+            // Return a response
+            return response()->json(['message' => 'Order received and stored successfully'], 201);
+
+        }
+        catch (ValidationException $e) {
+            Log::error('Validation error occurred', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'Validation error', 'errors' => $e->errors()], 422);
+
+        } catch (Exception $e) {
+            Log::error('An error occurred while processing the webToKds request', [
                 'exception' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'request_data' => $request->all()

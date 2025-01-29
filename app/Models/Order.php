@@ -33,6 +33,7 @@ class Order extends Model
         'order_date',
         'order_time',
         'notes',
+        'origin',
         'updated_at',
         'created_at',
         // Add any other fields that need mass assignment
