@@ -66,15 +66,12 @@ class OrderController extends Controller
             $this->syncStatusToWeb($validatedData['id'], $validatedData['status']);
         }
 
-        // $this->syncStatusToPos($validatedData['order_id'], $validatedData['status']);
-
         return response()->json([
             'success' => true,
             'message' => "Order status updated to {$validatedData['status']}",
         ]);
         // return response()->json(['success' => false, 'message' => 'Order not found']);
     }
-
 
     // used in updating across pos system
     public function syncStatusToPos($id, $status)
