@@ -22,6 +22,8 @@ Route::middleware([CheckPosSource::class])->group(function () {
         Route::post('/push-order', [APIController::class, 'order']);
         // order from WEB to KDS
         Route::post('/web-to-kds', [APIController::class, 'webToKds']);
+
+        Route::post('/cancel-order-from-web', [APIController::class, 'cancelOrderFromWeb']);
     });
 });
 

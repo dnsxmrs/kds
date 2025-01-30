@@ -249,139 +249,56 @@ class APIController extends Controller
         }
     }
 
+    public function cancelOrderFromWeb(Request $request)
+    {
+        // log incoming request
+        Log::info('Received cancelOrderFromWeb request', [
+            'request_method' => $request->method(),
+            'request_data' => $request->all()
+        ]);
 
+        try {
+            // Validate the incoming request data
+            $validatedData = $request->validate([
+                'id' => 'required|integer',
+                'orderNumber' => 'required|string',
+                'status' => 'required|string',
+            ]);
 
-    // public function upCategory(Request $request)
-    // {
-    //     // log incoming request
-    //     Log::info('Received upCategory request', [
-    //         'request_method' => $request->method(),
-    //         'request_data' => $request->all()
-    //     ]);
+            Log::info('Received cancelOrderFromWeb request', [
+                'validated data' => $validatedData,
+            ]);
 
-    //     // Determine the request method
-    //     $method = $request->method();
+            $order = Order::where('order_id', $validatedData['id'])
+                ->where('order_number', $validatedData['orderNumber'])
+                ->first();
 
-    //     if ($method === 'DELETE') {
-    //         return $this->deleteCategory($request);
-    //     }
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
 
-    //     // Validate the incoming request data
-    //     $validatedData = $request->validate([
-    //         'category_number' => 'required|integer', // Ensure the category exists
-    //         'category_name' => 'required|string|max:255', // Category name should not exceed 255 chars
-    //         'type' => 'required|string|max:255', // Validate category type (e.g., food, beverage)
-    //         'beverage_type' => 'nullable|string|max:255', // Optional, e.g., hot, iced
-    //         'image_url' => 'nullable|string|url', // Ensure the image_url is a valid URL if provided
-    //     ]);
+            $order->order_status = 'cancelled';
+            $order->save();
 
-    //     try {
-    //         // Check if category exists by category_number
-    //         $category = Category::where('category_number', $validatedData['category_number'])->first();
+            Log::info('Order cancelled successfully', ['order' => $order]);
 
-    //         if ($category) {
-    //             // Update the existing category
-    //             $category->update([
-    //                 'name' => $validatedData['category_name'],
-    //                 'type' => $validatedData['type'],
-    //                 'beverage_type' => $validatedData['beverage_type'] ?? null,
-    //                 'image' => $validatedData['image_url'] ?: null, // Treat empty string as null
-    //             ]);
+            // Return a response
+            return response()->json(['message' => 'Order cancelled successfully'], 200);
 
-    //             Log::info('Category updated successfully', [
-    //                 'category_number' => $category->category_number,
-    //                 'name' => $category->name,
-    //                 'type' => $category->type,
-    //                 'beverage_type' => $category->beverage_type,
-    //                 'image' => $category->image,
-    //             ]);
+        } catch (ValidationException $e) {
+            Log::error('Validation error occurred', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'Validation error', 'errors' => $e->errors()], 422);
 
-    //             // Return success response for update
-    //             return response()->json([
-    //                 'status' => 'success',
-    //                 'message' => 'Category updated successfully!',
-    //                 'category' => $category,
-    //             ], 200);
-    //         } else {
-    //             // Create a new category if it doesn't exist
-    //             $category = Category::create([
-    //                 'category_number' => $validatedData['category_number'],
-    //                 'name' => $validatedData['category_name'],
-    //                 'type' => $validatedData['type'],
-    //                 'beverage_type' => $validatedData['beverage_type'] ?? null,
-    //                 'image' => $validatedData['image_url'] ?: null,
-    //             ]);
-
-    //             Log::info('Category created successfully', [
-    //                 'category_number' => $category->category_number,
-    //                 'name' => $category->name,
-    //                 'type' => $category->type,
-    //                 'beverage_type' => $category->beverage_type,
-    //                 'image' => $category->image,
-    //             ]);
-
-    //             // Return success response for creation
-    //             return response()->json([
-    //                 'status' => 'success',
-    //                 'message' => 'Category created successfully!',
-    //                 'category' => $category,
-    //             ], 201);
-    //         }
-    //     } catch (\Exception $e) {
-    //         // Log the error with relevant context
-    //         Log::error('Failed to process category operation', [
-    //             'error' => $e->getMessage(),
-    //             'data' => $validatedData,
-    //         ]);
-
-    //         // Return failure response
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Failed to process category operation.',
-    //             'error_details' => $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
-
-    // // referenced in upCategory method - deleting a category
-    // protected function deleteCategory(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'category_number' => 'required|integer', // Ensure the category_number is provided
-    //     ]);
-
-    //     try {
-    //         $category = Category::where('category_number', $validatedData['category_number'])->first();
-
-    //         if (!$category) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Category not found.',
-    //             ], 404);
-    //         }
-
-    //         $category->delete();
-
-    //         Log::info('Category deleted successfully', [
-    //             'category_number' => $validatedData['category_number'],
-    //         ]);
-
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'message' => 'Category deleted successfully!',
-    //             'category_number' => $validatedData['category_number'],
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         Log::error('Failed to delete category', [
-    //             'error' => $e->getMessage(),
-    //             'category_number' => $validatedData['category_number'],
-    //         ]);
-
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Failed to delete category.',
-    //             'error_details' => $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
+        } catch (Exception $e) {
+            Log::error('An error occurred while processing the cancelOrderFromWeb request', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'An internal error occurred'], 500);
+        }
+    }
 }
