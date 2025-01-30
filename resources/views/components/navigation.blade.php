@@ -14,10 +14,10 @@
             <!-- Search Bar, Basket Icon, and Buttons -->
             <div class="flex items-center space-x-2">
                 <!-- Admin Button -->
-                <button
+                {{-- <button
                     class="flex items-center justify-center w-40 h-10 px-6 py-3 text-lg text-white bg-black rounded-full hover:bg-brown-600">
                     <img src="assets/Default User.png" alt="User" class="w-5 h-5 mr-2">Admin
-                </button>
+                </button> --}}
             </div>
         </div>
     </header>
