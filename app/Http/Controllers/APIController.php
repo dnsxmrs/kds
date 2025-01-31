@@ -301,4 +301,36 @@ class APIController extends Controller
             return response()->json(['message' => 'An internal error occurred'], 500);
         }
     }
+
+    public function orderComplete(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'orderId' => 'required|integer|exists:orders,id',
+                'status' => 'required|string|in:pending,preparing,ready,delivery,completed,cancelled',
+            ]);
+
+            // find order by id
+            $order = Order::find($validatedData['orderId']);
+
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+
+            $order->order_status = $validatedData['status'];
+            $order->save();
+
+            return response()->json(['message' => 'Order status updated successfully'], 200);
+        }
+        catch (Exception $e) {
+            Log::error('An error occurred while processing the orderComplete request', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json(['message' => 'An internal error occurred'], 500);
+        }
+
+
+    }
 }

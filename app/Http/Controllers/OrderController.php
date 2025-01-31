@@ -44,27 +44,37 @@ class OrderController extends Controller
     {
         $validatedData = $request->validate([
             'id' => 'required|integer|exists:orders,id',
-            'status' => 'required|string|in:preparing,ready,completed,canceled',
+            'status' => 'required|string|in:pending,preparing,ready,delivery,completed,cancelled',
         ]);
 
         $order = Order::find($validatedData['id']);
-        $order->order_status = $validatedData['status'];
-        $order->save();
+        // Find the order using order_id
+                // know the origin of order
+        if ($order->origin == 'pos') {
+            $order->order_status = $validatedData['status'];
+            $order->save();
+
+            $this->syncStatusToPos($validatedData['id'], $validatedData['status']);
+        } else {
+            if ($validatedData['status'] == 'completed') {
+                $order->order_status = 'delivery';
+                $order->save();
+                // send the order to pos to web
+                $this->syncStatusToWeb($validatedData['id'], 'delivery');
+            } else {
+                $order->order_status = $validatedData['status'];
+                $order->save();
+                // send the order to pos to web
+                $this->syncStatusToWeb($validatedData['id'], $validatedData['status']);
+            }
+        }
 
         Log::info("Order status updated to", [
             'id' => $order->order_id, // for outside use like order_id of pos or web
-            'status' => $validatedData['status'],
+            'status' => $order->order_status,
             'order_number' => $order->order_number,
             'order' => $order,
         ]);
-
-        // know the origin of order
-        if ($order->origin == 'pos') {
-            $this->syncStatusToPos($validatedData['id'], $validatedData['status']);
-        } else {
-            // send the order to pos to web
-            $this->syncStatusToWeb($validatedData['id'], $validatedData['status']);
-        }
 
         return response()->json([
             'success' => true,
